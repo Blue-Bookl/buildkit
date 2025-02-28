@@ -724,6 +724,7 @@ func toDispatchState(ctx context.Context, dt []byte, opt ConvertOpt) (*dispatchS
 			extraHosts:          opt.ExtraHosts,
 			shmSize:             opt.ShmSize,
 			ulimit:              opt.Ulimits,
+			devices:             opt.Devices,
 			cgroupParent:        opt.CgroupParent,
 			llbCaps:             opt.LLBCaps,
 			sourceMap:           opt.SourceMap,
@@ -801,14 +802,20 @@ func toDispatchState(ctx context.Context, dt []byte, opt ConvertOpt) (*dispatchS
 	target.state = target.state.SetMarshalDefaults(defaults...)
 
 	if !platformOpt.implicitTarget {
+		sameOsArch := platformOpt.targetPlatform.OS == target.image.OS && platformOpt.targetPlatform.Architecture == target.image.Architecture
 		target.image.OS = platformOpt.targetPlatform.OS
 		target.image.Architecture = platformOpt.targetPlatform.Architecture
-		target.image.Variant = platformOpt.targetPlatform.Variant
-		target.image.OSVersion = platformOpt.targetPlatform.OSVersion
+		if platformOpt.targetPlatform.Variant != "" || !sameOsArch {
+			target.image.Variant = platformOpt.targetPlatform.Variant
+		}
+		if platformOpt.targetPlatform.OSVersion != "" || !sameOsArch {
+			target.image.OSVersion = platformOpt.targetPlatform.OSVersion
+		}
 		if platformOpt.targetPlatform.OSFeatures != nil {
 			target.image.OSFeatures = append([]string{}, platformOpt.targetPlatform.OSFeatures...)
 		}
 	}
+	target.image.Platform = platforms.Normalize(target.image.Platform)
 
 	return target, nil
 }
@@ -859,6 +866,7 @@ type dispatchOpt struct {
 	extraHosts          []llb.HostIP
 	shmSize             int64
 	ulimit              []*pb.Ulimit
+	devices             []*pb.CDIDevice
 	cgroupParent        string
 	llbCaps             *apicaps.CapSet
 	sourceMap           *llb.SourceMap
@@ -1303,6 +1311,23 @@ func dispatchRun(d *dispatchState, c *instructions.RunCommand, proxy *llb.ProxyE
 		}
 	}
 
+	if dopt.llbCaps != nil && dopt.llbCaps.Supports(pb.CapExecMetaCDI) == nil {
+		for _, device := range dopt.devices {
+			deviceOpts := []llb.CDIDeviceOption{
+				llb.CDIDeviceName(device.Name),
+			}
+			if device.Optional {
+				deviceOpts = append(deviceOpts, llb.CDIDeviceOptional)
+			}
+			opt = append(opt, llb.AddCDIDevice(deviceOpts...))
+		}
+		runDevices, err := dispatchRunDevices(c)
+		if err != nil {
+			return err
+		}
+		opt = append(opt, runDevices...)
+	}
+
 	shlex := *dopt.shlex
 	shlex.RawQuotes = true
 	shlex.SkipUnsetEnv = true
@@ -1419,18 +1444,14 @@ func dispatchCopy(d *dispatchState, cfg copyConfig) error {
 			}
 			chopt.Mode = os.FileMode(p)
 		} else {
-			if featureCopyChmodNonOctalEnabled {
-				if _, err := mode.Parse(cfg.chmod); err != nil {
-					var ne *strconv.NumError
-					if errors.As(err, &ne) {
-						return nonOctalErr // return nonOctalErr for compatibility if the value looks numeric
-					}
-					return err
+			if _, err := mode.Parse(cfg.chmod); err != nil {
+				var ne *strconv.NumError
+				if errors.As(err, &ne) {
+					return nonOctalErr // return nonOctalErr for compatibility if the value looks numeric
 				}
-				chopt.ModeStr = cfg.chmod
-			} else {
-				return nonOctalErr
+				return err
 			}
+			chopt.ModeStr = cfg.chmod
 		}
 	}
 

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile-upstream:master
 
-ARG RUNC_VERSION=v1.2.4
+ARG RUNC_VERSION=v1.2.5
 ARG CONTAINERD_VERSION=v2.0.2
 # CONTAINERD_ALT_VERSION_... defines fallback containerd version for integration tests
 ARG CONTAINERD_ALT_VERSION_17=v1.7.25
@@ -14,7 +14,7 @@ ARG DNSNAME_VERSION=v1.3.1
 ARG NYDUS_VERSION=v2.2.4
 ARG MINIO_VERSION=RELEASE.2022-05-03T20-36-08Z
 ARG MINIO_MC_VERSION=RELEASE.2022-05-04T06-07-55Z
-ARG AZURITE_VERSION=3.18.0
+ARG AZURITE_VERSION=3.33.0
 ARG GOTESTSUM_VERSION=v1.9.0
 ARG DELVE_VERSION=v1.23.1
 
@@ -22,6 +22,7 @@ ARG GO_VERSION=1.23
 ARG ALPINE_VERSION=3.21
 ARG XX_VERSION=1.6.1
 ARG BUILDKIT_DEBUG
+ARG EXPORT_BASE=alpine
 
 # minio for s3 integration tests
 FROM minio/minio:${MINIO_VERSION} AS minio
@@ -160,10 +161,15 @@ COPY --link --from=cni-plugins /opt/cni/bin/firewall /buildkit-cni-firewall
 FROM scratch AS cni-plugins-export-squashed
 COPY --from=cni-plugins-export / /
 
+FROM --platform=$BUILDPLATFORM alpine:${ALPINE_VERSION} AS binfmt-filter
+# built from https://github.com/tonistiigi/binfmt/releases/tag/buildkit%2Fv9.2.0-50
+COPY --link --from=tonistiigi/binfmt:buildkit-v9.2.0-50@sha256:ff21b00e7238dce3bbd74fbe25591f7213837a77861b47b2df5e019540ec33fa / /out/
+WORKDIR /out/
+RUN rm buildkit-qemu-loongarch64 buildkit-qemu-mips64 buildkit-qemu-mips64el
+
 FROM scratch AS binaries-linux
 COPY --link --from=runc /usr/bin/runc /buildkit-runc
-# built from https://github.com/tonistiigi/binfmt/releases/tag/buildkit%2Fv7.1.0-30
-COPY --link --from=tonistiigi/binfmt:buildkit-v7.1.0-30@sha256:45dd57b4ba2f24e2354f71f1e4e51f073cb7a28fd848ce6f5f2a7701142a6bf0 / /
+COPY --link --from=binfmt-filter /out/ /
 COPY --link --from=cni-plugins-export-squashed / /
 COPY --link --from=buildctl /usr/bin/buildctl /
 COPY --link --from=buildkitd /usr/bin/buildkitd /
@@ -194,11 +200,27 @@ RUN --mount=from=binaries \
 FROM scratch AS release
 COPY --link --from=releaser /out/ /
 
-FROM alpine:${ALPINE_VERSION} AS buildkit-export
+FROM alpine:${ALPINE_VERSION} AS buildkit-export-alpine
 RUN apk add --no-cache fuse3 git openssh pigz xz iptables ip6tables \
   && ln -s fusermount3 /usr/bin/fusermount
 COPY --link examples/buildctl-daemonless/buildctl-daemonless.sh /usr/bin/
 VOLUME /var/lib/buildkit
+
+FROM ubuntu:24.04 AS buildkit-export-ubuntu
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    fuse3 \
+    git \
+    openssh-client \
+    pigz \
+    xz-utils \
+    iptables \
+    ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+COPY --link examples/buildctl-daemonless/buildctl-daemonless.sh /usr/bin/
+VOLUME /var/lib/buildkit
+
+FROM buildkit-export-${EXPORT_BASE} AS buildkit-export
 
 FROM gobuild-base AS containerd-build
 WORKDIR /go/src/github.com/containerd/containerd
