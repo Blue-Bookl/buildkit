@@ -17,7 +17,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"sort"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -3524,8 +3524,7 @@ EXPOSE 5000
 	for p := range ociimg.Config.ExposedPorts {
 		ports = append(ports, p)
 	}
-
-	sort.Strings(ports)
+	slices.Sort(ports)
 
 	require.Equal(t, "3000/tcp", ports[0])
 	require.Equal(t, "4000/udp", ports[1])
@@ -5803,7 +5802,6 @@ COPY --from=base unique /
 				Attrs: map[string]string{
 					"ref":            target,
 					"oci-mediatypes": "true",
-					"image-manifest": "true",
 				},
 			},
 		},
@@ -8986,7 +8984,6 @@ COPY --link foo foo
 						Attrs: map[string]string{
 							"ref":            target + "-cache",
 							"oci-mediatypes": "true",
-							"image-manifest": "true",
 						},
 					},
 				},

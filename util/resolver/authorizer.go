@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"maps"
 	"net/http"
-	"sort"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -288,7 +288,7 @@ func (ah *authHandler) doBearerAuth(ctx context.Context, sm *session.Manager, g 
 
 	to.Scopes = parseScopes(docker.GetTokenScopes(ctx, to.Scopes)).normalize()
 
-	// Docs: https://docs.docker.com/registry/spec/auth/scope
+	// Docs: https://distribution.github.io/distribution/spec/auth/scope
 	scoped := strings.Join(to.Scopes, " ")
 
 	res, err := ah.g.Do(ctx, scoped, func(ctx context.Context) (*authResult, error) {
@@ -444,7 +444,7 @@ func sameRequest(r1, r2 *http.Request) bool {
 type scopes map[string]map[string]struct{}
 
 func parseScopes(s []string) scopes {
-	// https://docs.docker.com/registry/spec/auth/scope/
+	// https://distribution.github.io/distribution/spec/auth/scope/
 	m := map[string]map[string]struct{}{}
 	for _, scopeStr := range s {
 		if scopeStr == "" {
@@ -481,7 +481,7 @@ func (s scopes) normalize() []string {
 	for n := range s {
 		names = append(names, n)
 	}
-	sort.Strings(names)
+	slices.Sort(names)
 
 	out := make([]string, 0, len(s))
 
@@ -490,7 +490,7 @@ func (s scopes) normalize() []string {
 		for a := range s[n] {
 			actions = append(actions, a)
 		}
-		sort.Strings(actions)
+		slices.Sort(actions)
 
 		out = append(out, n+":"+strings.Join(actions, ","))
 	}
