@@ -376,6 +376,9 @@ func (c *Controller) Solve(ctx context.Context, req *controlapi.SolveRequest) (*
 	atomic.AddInt64(&c.buildCount, 1)
 	defer atomic.AddInt64(&c.buildCount, -1)
 
+	if req.Cache == nil {
+		req.Cache = &controlapi.CacheOptions{} // make sure cache options are initialized
+	}
 	translateLegacySolveRequest(req)
 
 	defer func() {
@@ -514,8 +517,9 @@ func (c *Controller) Solve(ctx context.Context, req *controlapi.SolveRequest) (*
 		FrontendInputs: req.FrontendInputs,
 		CacheImports:   cacheImports,
 	}, llbsolver.ExporterRequest{
-		Exporters:      expis,
-		CacheExporters: cacheExporters,
+		Exporters:             expis,
+		CacheExporters:        cacheExporters,
+		EnableSessionExporter: req.EnableSessionExporter,
 	}, entitlementsFromPB(req.Entitlements), procs, req.Internal, req.SourcePolicy)
 	if err != nil {
 		return nil, err
