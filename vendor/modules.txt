@@ -4,8 +4,8 @@ cyphar.com/go-pathrs
 cyphar.com/go-pathrs/internal/fdutils
 cyphar.com/go-pathrs/internal/libpathrs
 cyphar.com/go-pathrs/procfs
-# github.com/Azure/azure-sdk-for-go/sdk/azcore v1.20.0
-## explicit; go 1.23.0
+# github.com/Azure/azure-sdk-for-go/sdk/azcore v1.21.0
+## explicit; go 1.24.0
 github.com/Azure/azure-sdk-for-go/sdk/azcore
 github.com/Azure/azure-sdk-for-go/sdk/azcore/arm/internal/resource
 github.com/Azure/azure-sdk-for-go/sdk/azcore/arm/policy
@@ -616,7 +616,7 @@ github.com/go-openapi/jsonreference/internal
 # github.com/go-openapi/loads v0.23.3
 ## explicit; go 1.24.0
 github.com/go-openapi/loads
-# github.com/go-openapi/runtime v0.29.2
+# github.com/go-openapi/runtime v0.29.3
 ## explicit; go 1.24.0
 github.com/go-openapi/runtime
 github.com/go-openapi/runtime/client
@@ -634,10 +634,10 @@ github.com/go-openapi/spec
 ## explicit; go 1.24.0
 github.com/go-openapi/strfmt
 github.com/go-openapi/strfmt/internal/bsonlite
-# github.com/go-openapi/swag v0.25.4
+# github.com/go-openapi/swag v0.25.5
 ## explicit; go 1.24.0
 github.com/go-openapi/swag
-# github.com/go-openapi/swag/cmdutils v0.25.4
+# github.com/go-openapi/swag/cmdutils v0.25.5
 ## explicit; go 1.24.0
 github.com/go-openapi/swag/cmdutils
 # github.com/go-openapi/swag/conv v0.25.5
@@ -661,7 +661,7 @@ github.com/go-openapi/swag/loading
 # github.com/go-openapi/swag/mangling v0.25.5
 ## explicit; go 1.24.0
 github.com/go-openapi/swag/mangling
-# github.com/go-openapi/swag/netutils v0.25.4
+# github.com/go-openapi/swag/netutils v0.25.5
 ## explicit; go 1.24.0
 github.com/go-openapi/swag/netutils
 # github.com/go-openapi/swag/stringutils v0.25.5
@@ -813,7 +813,7 @@ github.com/moby/locker
 ## explicit; go 1.19
 github.com/moby/patternmatcher
 github.com/moby/patternmatcher/ignorefile
-# github.com/moby/policy-helpers v0.0.0-20260324161837-b7c0b994300b
+# github.com/moby/policy-helpers v0.0.0-20260507153417-a39d60132186
 ## explicit; go 1.25.5
 github.com/moby/policy-helpers
 github.com/moby/policy-helpers/image
@@ -994,7 +994,7 @@ github.com/sigstore/rekor-tiles/v2/pkg/generated/protobuf
 github.com/sigstore/rekor-tiles/v2/pkg/note
 github.com/sigstore/rekor-tiles/v2/pkg/types/verifier
 github.com/sigstore/rekor-tiles/v2/pkg/verify
-# github.com/sigstore/sigstore v1.10.4
+# github.com/sigstore/sigstore v1.10.5
 ## explicit; go 1.25.0
 github.com/sigstore/sigstore/pkg/cryptoutils
 github.com/sigstore/sigstore/pkg/signature
@@ -1010,7 +1010,7 @@ github.com/sigstore/sigstore-go/pkg/tlog
 github.com/sigstore/sigstore-go/pkg/tuf
 github.com/sigstore/sigstore-go/pkg/util
 github.com/sigstore/sigstore-go/pkg/verify
-# github.com/sigstore/timestamp-authority/v2 v2.0.3
+# github.com/sigstore/timestamp-authority/v2 v2.0.6
 ## explicit; go 1.25.0
 github.com/sigstore/timestamp-authority/v2/pkg/verification
 # github.com/sirupsen/logrus v1.9.4
@@ -1227,7 +1227,7 @@ go.yaml.in/yaml/v2
 # go.yaml.in/yaml/v3 v3.0.4
 ## explicit; go 1.16
 go.yaml.in/yaml/v3
-# golang.org/x/crypto v0.49.0
+# golang.org/x/crypto v0.50.0
 ## explicit; go 1.25.0
 golang.org/x/crypto/argon2
 golang.org/x/crypto/blake2b
@@ -1258,11 +1258,11 @@ golang.org/x/exp/trace
 golang.org/x/exp/trace/internal/tracev1
 golang.org/x/exp/trace/internal/tracev2
 golang.org/x/exp/trace/internal/version
-# golang.org/x/mod v0.33.0
-## explicit; go 1.24.0
+# golang.org/x/mod v0.34.0
+## explicit; go 1.25.0
 golang.org/x/mod/semver
 golang.org/x/mod/sumdb/note
-# golang.org/x/net v0.52.0
+# golang.org/x/net v0.53.0
 ## explicit; go 1.25.0
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -1277,7 +1277,7 @@ golang.org/x/net/trace
 golang.org/x/sync/errgroup
 golang.org/x/sync/semaphore
 golang.org/x/sync/singleflight
-# golang.org/x/sys v0.42.0
+# golang.org/x/sys v0.43.0
 ## explicit; go 1.25.0
 golang.org/x/sys/cpu
 golang.org/x/sys/plan9
@@ -1286,17 +1286,17 @@ golang.org/x/sys/windows
 golang.org/x/sys/windows/registry
 golang.org/x/sys/windows/svc
 golang.org/x/sys/windows/svc/mgr
-# golang.org/x/term v0.41.0
+# golang.org/x/term v0.42.0
 ## explicit; go 1.25.0
 golang.org/x/term
-# golang.org/x/text v0.35.0
+# golang.org/x/text v0.36.0
 ## explicit; go 1.25.0
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/time v0.14.0
-## explicit; go 1.24.0
+# golang.org/x/time v0.15.0
+## explicit; go 1.25.0
 golang.org/x/time/rate
 # google.golang.org/genproto/googleapis/api v0.0.0-20260406210006-6f92a3bedf2d
 ## explicit; go 1.25.0
