@@ -36,7 +36,7 @@ require (
 	github.com/containernetworking/plugins v1.9.1
 	github.com/coreos/go-systemd/v22 v22.7.0
 	github.com/distribution/reference v0.6.0
-	github.com/docker/cli v29.4.2+incompatible
+	github.com/docker/cli v29.4.3+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/gofrs/flock v0.13.0
 	github.com/golang/protobuf v1.5.4
