@@ -47,7 +47,6 @@ func newAuthHandlerNS(sm *session.Manager) *authHandlerNS {
 }
 
 func (a *authHandlerNS) get(ctx context.Context, host string, sm *session.Manager, g session.Group) *authFetcher {
-	hasSession := false
 	if g != nil {
 		if iter := g.SessionIterator(); iter != nil {
 			for {
@@ -55,21 +54,12 @@ func (a *authHandlerNS) get(ctx context.Context, host string, sm *session.Manage
 				if id == "" {
 					break
 				}
-				hasSession = true
 				h, ok := a.fetchers[host+"/"+id]
 				if ok {
 					h.lastUsed = time.Now()
 					return h
 				}
 			}
-		}
-	}
-
-	if !hasSession {
-		h, ok := a.fetchers[host+"/"]
-		if ok {
-			h.lastUsed = time.Now()
-			return h
 		}
 	}
 
@@ -195,12 +185,12 @@ func (a *dockerAuthorizer) AddResponses(ctx context.Context, responses []*http.R
 
 			var username, secret string
 			sessionID, pubKey, err := sessionauth.GetTokenAuthority(ctx, host, a.sm, a.session)
-			if err != nil && !errors.Is(err, session.ErrNoActiveSessions) {
+			if err != nil {
 				return err
 			}
 			if pubKey == nil {
 				sessionID, username, secret, err = a.getCredentials(ctx, host)
-				if err != nil && !errors.Is(err, session.ErrNoActiveSessions) {
+				if err != nil {
 					return err
 				}
 			}
