@@ -428,11 +428,11 @@ target "docs-dockerfile" {
   output = ["./frontend/dockerfile/docs/rules"]
 }
 
-target "mod-outdated" {
+target "gomod-updates" {
   inherits = ["_common"]
   dockerfile = "./hack/dockerfiles/vendor.Dockerfile"
-  target = "outdated"
-  no-cache-filter = ["outdated"]
+  target = "gomod-updates"
+  no-cache-filter = ["gomod-updates"]
   output = ["type=cacheonly"]
 }
 
