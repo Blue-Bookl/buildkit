@@ -54,7 +54,7 @@ jobs:
       contents: read # same as global permission
       id-token: write # for signing attestation(s) with GitHub OIDC Token
     with:
-      runner: amd64
+      runner: ubuntu-24.04
       setup-qemu: true
       artifact-name: buildkit-binaries
       artifact-upload: true
@@ -234,7 +234,7 @@ jobs:
       contents: read # same as global permission
       id-token: write # for signing attestation(s) with GitHub OIDC Token
     with:
-      runner: amd64
+      runner: ubuntu-24.04
       setup-qemu: true
       target: image-cross
       cache: true

@@ -137,7 +137,7 @@ jobs:
       contents: read # same as global permission
       id-token: write # for signing attestation(s) with GitHub OIDC Token
     with:
-      runner: amd64
+      runner: ubuntu-24.04
       setup-qemu: true
       target: frontend-image-cross
       cache: true
