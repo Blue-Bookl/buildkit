@@ -2349,7 +2349,7 @@ func testClientGatewayCanceledCredentialsCallbackReturns(t *testing.T, sb integr
 	t.Cleanup(proxyServer.Close)
 
 	ref := strings.TrimPrefix(proxyServer.URL, "http://") + "/" + repo + ":latest"
-	host := strings.SplitN(ref, "/", 2)[0]
+	host, _, _ := strings.Cut(ref, "/")
 
 	started := make(chan struct{})
 	release := make(chan struct{})

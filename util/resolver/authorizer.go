@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/containerd/containerd/v2/core/remotes/docker"
@@ -28,7 +29,7 @@ import (
 const defaultExpiration = 60
 
 type authHandlerNS struct {
-	counter int64 // needs to be 64bit aligned for 32bit systems
+	counter atomic.Int64
 
 	fetchers   map[string]*authFetcher
 	muHandlers sync.Mutex

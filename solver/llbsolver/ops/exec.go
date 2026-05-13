@@ -412,8 +412,8 @@ func (e *ExecOp) Exec(ctx context.Context, jobCtx solver.JobContext, inputs []so
 			err = errdefs.WithExecError(err, execInputs, execMounts)
 		} else {
 			// Only release actives if err is nil.
-			for i := len(p.Actives) - 1; i >= 0; i-- { // call in LIFO order
-				p.Actives[i].Ref.Release(context.TODO())
+			for _, active := range slices.Backward(p.Actives) { // call in LIFO order
+				active.Ref.Release(context.TODO())
 			}
 		}
 		for _, o := range p.OutputRefs {

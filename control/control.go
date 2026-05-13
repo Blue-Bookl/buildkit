@@ -81,8 +81,7 @@ type Opt struct {
 }
 
 type Controller struct { // TODO: ControlService
-	// buildCount needs to be 64bit aligned
-	buildCount                   int64
+	buildCount                   atomic.Int64
 	opt                          Opt
 	solver                       *llbsolver.Solver
 	history                      *history.Queue
@@ -213,7 +212,7 @@ func (c *Controller) releaseUnreferencedCache(ctx context.Context) error {
 }
 
 func (c *Controller) Prune(req *controlapi.PruneRequest, stream controlapi.Control_PruneServer) error {
-	if atomic.LoadInt64(&c.buildCount) == 0 {
+	if c.buildCount.Load() == 0 {
 		imageutil.CancelCacheLeases()
 	}
 
@@ -383,8 +382,8 @@ func translateLegacySolveRequest(req *controlapi.SolveRequest) {
 func (c *Controller) Solve(ctx context.Context, req *controlapi.SolveRequest) (*controlapi.SolveResponse, error) {
 	defer trace.StartRegion(ctx, "Solve").End()
 	trace.Logf(ctx, "Request", "solve request: %v", req.Ref)
-	atomic.AddInt64(&c.buildCount, 1)
-	defer atomic.AddInt64(&c.buildCount, -1)
+	c.buildCount.Add(1)
+	defer c.buildCount.Add(-1)
 
 	if req.Cache == nil {
 		req.Cache = &controlapi.CacheOptions{} // make sure cache options are initialized

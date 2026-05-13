@@ -13,6 +13,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -1420,8 +1421,8 @@ func resetSnapshotMtimes(root *os.Root, t time.Time) error {
 	if err != nil {
 		return err
 	}
-	for i := len(dirs) - 1; i >= 0; i-- {
-		if err := root.Chtimes(dirs[i], t, t); err != nil {
+	for _, dir := range slices.Backward(dirs) {
+		if err := root.Chtimes(dir, t, t); err != nil {
 			return err
 		}
 	}
