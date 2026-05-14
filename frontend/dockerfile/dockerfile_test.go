@@ -4356,7 +4356,7 @@ USER nobody
 	require.Equal(t, "nobody", ociimg.Config.User)
 }
 
-// testUserAdditionalGids ensures that that the primary GID is also included in the additional GID list.
+// testUserAdditionalGids ensures that the primary GID is also included in the additional GID list.
 // CVE-2023-25173: https://github.com/advisories/GHSA-hmfx-3pcx-653p
 func testUserAdditionalGids(t *testing.T, sb integration.Sandbox) {
 	integration.SkipOnPlatform(t, "windows", "Tests Unix GID behavior using id command and /etc/passwd, not applicable to Windows")
